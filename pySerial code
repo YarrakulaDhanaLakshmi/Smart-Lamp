@@ -1,0 +1,24 @@
+import serial
+import time
+
+# Connect to the Arduino (Change 'COM3' to the correct port on your system)
+arduino = serial.Serial(port='COM3', baudrate=9600, timeout=1)
+
+def control_lamp():
+    while True:
+        if arduino.in_waiting > 0:  # Check if data is available from Arduino
+            sensor_data = arduino.readline().decode('utf-8').strip()  # Read and decode
+            print(f"Arduino Says: {sensor_data}")  # Print received data
+            
+            if "Motion Detected" in sensor_data:
+                print("Turning Lamp ON 💡")
+            elif "No Motion" in sensor_data:
+                print("Turning Lamp OFF 🌙")
+
+        time.sleep(0.2)  # Small delay for stability
+
+try:
+    control_lamp()
+except KeyboardInterrupt:
+    print("\nExiting...")
+    arduino.close()
